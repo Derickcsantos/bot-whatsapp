@@ -1,6 +1,7 @@
 import express from 'express';
 import qrcode from 'qrcode-terminal';
-import { Client, LocalAuth } from 'whatsapp-web.js';
+import pkg from 'whatsapp-web.js';
+const { Client, LocalAuth } = pkg;
 import cors from 'cors';
 import dotenv from 'dotenv';
 // import { OpenAI } from 'openai'; // Descomente se for usar o OpenAI
