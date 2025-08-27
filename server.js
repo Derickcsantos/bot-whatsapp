@@ -1,5 +1,5 @@
 import express from 'express';
-import qrcode from 'qrcode-terminal';
+import qrcode from 'qrcode';
 import pkg from 'whatsapp-web.js';
 const { Client, LocalAuth } = pkg;
 import cors from 'cors';
@@ -28,10 +28,26 @@ const client = new Client({
     },
 });
 
+let latestQR = null;
+
 client.on('qr', (qr) => {
-    console.log('QR RECEIVED', qr);
-    qrcode.generate(qr, { small: true });
+    latestQR = qr;
+    console.log('QR RECEIVED');
 });
+
+app.get('/qrcode', async (req, res) => {
+    if (!latestQR) {
+        return res.send('Nenhum QR gerado ainda.');
+    }
+    try {
+        const qrImage = await qrcode.toDataURL(latestQR);
+        const html = `<img src="${qrImage}" />`;
+        res.send(html);
+    } catch (err) {
+        res.status(500).send('Erro ao gerar QR');
+    }
+});
+
 
 client.on('ready', () => {
     console.log('WhatsApp Client is ready!');
