@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Painel do Bot – Liga/Desliga</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root { --bg:#0f172a; --card:#111827; --txt:#e5e7eb; --muted:#94a3b8; --ok:#10b981; --warn:#f59e0b; }
+*{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui;background:linear-gradient(180deg,#0b1022,#0f172a);}
+.container{max-width:640px;margin:40px auto;padding:24px}
+.card{background:var(--card);border:1px solid #1f2937;border-radius:16px;padding:24px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+h1{color:var(--txt);margin:0 0 8px} p{color:var(--muted);margin:0 0 16px}
+.status{display:flex;align-items:center;gap:8px;margin:16px 0;color:var(--txt)}
+.dot{width:10px;height:10px;border-radius:50%}
+.dot.on{background:var(--ok)} .dot.off{background:var(--warn)}
+.btn{cursor:pointer;display:inline-flex;align-items:center;gap:8px;background:#1f2937;color:var(--txt);border:1px solid #374151;border-radius:12px;padding:12px 16px;font-weight:600}
+.btn:hover{filter:brightness(1.1)}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+code{background:#0b1022;border:1px solid #1f2937;padding:2px 6px;border-radius:6px;color:#e2e8f0}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="card">
+<h1>Bot WhatsApp – Liga/Desliga</h1>
+<p>Use o botão abaixo para ativar ou desativar o atendimento automático por IA.</p>
+
+
+<div class="status">
+<div id="dot" class="dot off"></div>
+<div id="label">Carregando status...</div>
+</div>
+
+
+<div class="row">
+<button id="toggle" class="btn">Alternar estado</button>
+<button id="refresh" class="btn">Atualizar</button>
+</div>
+
+
+<!-- <p style="margin-top:16px">Endpoint: <code>/api/status</code></p> -->
+</div>
+</div>
+<script src="/app.js"></script>
+</body>
+</html>

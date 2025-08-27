@@ -1,0 +1,12 @@
+whatsapp-bot-ia/
+├─ package.json
+├─ .env.example
+├─ server.js
+├─ src/
+│ ├─ ai.js
+│ ├─ bot.js
+│ └─ state.js
+├─ public/
+│ ├─ index.html
+│ └─ app.js
+└─ sessions/
