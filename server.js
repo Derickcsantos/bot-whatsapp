@@ -27,19 +27,25 @@ class RedisSessionStore {
         this.prefix = 'whatsapp-session:';
     }
 
-    async get(id) {
-        const data = await this.client.get(this.prefix + id);
+    async get({ session }) {
+        const data = await this.client.get(this.prefix + session);
         return data ? JSON.parse(data) : null;
     }
 
-    async set(id, value) {
-        await this.client.set(this.prefix + id, JSON.stringify(value));
+    async set({ session, data }) {
+        await this.client.set(this.prefix + session, JSON.stringify(data));
     }
 
-    async delete(id) {
-        await this.client.del(this.prefix + id);
+    async delete({ session }) {
+        await this.client.del(this.prefix + session);
+    }
+
+    async sessionExists({ session }) {
+        const exists = await this.client.exists(this.prefix + session);
+        return exists === 1;
     }
 }
+
 
 // --- Configuração do WhatsApp Client ---
 const redisClient = createClient({
@@ -152,4 +158,5 @@ app.listen(port, () => {
     console.log(`Painel de controle disponível em http://localhost:${port}/index.html`);
 
 });
+
 
