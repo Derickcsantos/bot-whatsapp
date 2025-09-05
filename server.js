@@ -1,6 +1,7 @@
 import express from 'express';
 import qrcode from 'qrcode';
-import { RemoteAuth } from 'whatsapp-web.js';
+import pkg from 'whatsapp-web.js';
+const { Client, RemoteAuth } = pkg;
 import { createClient } from 'redis';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -151,3 +152,4 @@ app.listen(port, () => {
     console.log(`Painel de controle disponível em http://localhost:${port}/index.html`);
 
 });
+
