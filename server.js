@@ -1,7 +1,8 @@
 import express from 'express';
 import qrcode from 'qrcode';
 import pkg from 'whatsapp-web.js';
-const { Client, LocalAuth } = pkg;
+import { createClient } from 'redis';
+import { RedisStore } from 'wwebjs-redis-auth';
 import cors from 'cors';
 import dotenv from 'dotenv';
 // import { OpenAI } from 'openai'; // Descomente se for usar o OpenAI
@@ -20,12 +21,27 @@ app.use(express.json());
 app.use(express.static('public')); // Servir arquivos estáticos da pasta 'public'
 
 // --- Configuração do WhatsApp Client ---
+const redisClient = createClient({
+  url: process.env.REDIS_URL,
+    socket: {
+    tls: true,
+    rejectUnauthorized: false, // necessário para Upstash
+  }
+});
+
+await redisClient.connect();
+
+const store = new RedisStore({ client: redisClient });
+
 const client = new Client({
-    authStrategy: new LocalAuth(),
+    authStrategy: new RemoteAuth({
+        store: store,
+        backupSyncIntervalMs: 300000 // opcional
+    }),
     puppeteer: {
         headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    },
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+    }
 });
 
 let latestQR = null;
@@ -48,6 +64,13 @@ app.get('/qrcode', async (req, res) => {
     }
 });
 
+client.on('authenticated', () => {
+    console.log('✅ Autenticado com sucesso!');
+});
+
+client.on('auth_failure', msg => {
+    console.error('❌ Falha na autenticação:', msg);
+});
 
 client.on('ready', () => {
     console.log('WhatsApp Client is ready!');
@@ -80,6 +103,14 @@ client.on('message', async (message) => {
 
 client.initialize();
 
+client.on('change_state', (state) => {
+    console.log('📶 Estado atual do cliente:', state);
+});
+
+client.on('disconnected', (reason) => {
+    console.log('⚠️ Cliente desconectado:', reason);
+});
+
 // --- API Endpoints ---
 app.get('/api/status', (req, res) => {
     res.json({ enabled: botEnabled });
@@ -98,4 +129,5 @@ app.post('/api/toggle', (req, res) => {
 app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}`);
     console.log(`Painel de controle disponível em http://localhost:${port}/index.html`);
+
 });
