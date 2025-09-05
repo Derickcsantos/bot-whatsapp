@@ -17,7 +17,9 @@
     "express": "^5.1.0",
     "openai": "^5.15.0",
     "qrcode": "^1.5.4",
-    "whatsapp-web.js": "^1.32.0",
+    "redis": "^5.8.2",
+    "whatsapp-web.js": "^1.33.2",
+    "wwebjs-redis-auth": "https://github.com/Rhymen/wwebjs-redis-auth.git",
     "ws": "^8.18.3"
   }
 }
