@@ -1,8 +1,7 @@
 import express from 'express';
 import qrcode from 'qrcode';
-import pkg from 'whatsapp-web.js';
+import { RemoteAuth } from 'whatsapp-web.js';
 import { createClient } from 'redis';
-import { RedisStore } from 'wwebjs-redis-auth';
 import cors from 'cors';
 import dotenv from 'dotenv';
 // import { OpenAI } from 'openai'; // Descomente se for usar o OpenAI
@@ -20,6 +19,27 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public')); // Servir arquivos estáticos da pasta 'public'
 
+
+class RedisSessionStore {
+    constructor(redisClient) {
+        this.client = redisClient;
+        this.prefix = 'whatsapp-session:';
+    }
+
+    async get(id) {
+        const data = await this.client.get(this.prefix + id);
+        return data ? JSON.parse(data) : null;
+    }
+
+    async set(id, value) {
+        await this.client.set(this.prefix + id, JSON.stringify(value));
+    }
+
+    async delete(id) {
+        await this.client.del(this.prefix + id);
+    }
+}
+
 // --- Configuração do WhatsApp Client ---
 const redisClient = createClient({
   url: process.env.REDIS_URL,
@@ -31,7 +51,7 @@ const redisClient = createClient({
 
 await redisClient.connect();
 
-const store = new RedisStore({ client: redisClient });
+const store = new RedisSessionStore(redisClient);
 
 const client = new Client({
     authStrategy: new RemoteAuth({
